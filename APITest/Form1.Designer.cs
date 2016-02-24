@@ -133,7 +133,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox);
             this.Name = "Form1";
-            this.Text = "(a9t9) Free OCR API - Test ";
+            this.Text = "OCR.SPACE Free OCR API - Test App";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

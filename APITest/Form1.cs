@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using System.IO;
@@ -25,7 +20,7 @@ namespace OCRAPITest
         private string getSelectedLanguage()
         {
 
-            //https://ocr.a9t9.com/OCRAPI#PostParameters
+            //https://ocr.space/OCRAPI#PostParameters
 
             //Czech = cze; Danish = dan; Dutch = dut; English = eng; Finnish = fin; French = fre; 
             //German = ger; Hungarian = hun; Italian = ita; Norwegian = nor; Polish = pol; Portuguese = por;
@@ -152,7 +147,7 @@ namespace OCRAPITest
                 byte[] imageData = ImageToBase64(pictureBox.BackgroundImage, System.Drawing.Imaging.ImageFormat.Jpeg);
                 form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "image", "image.jpg");
 
-                HttpResponseMessage response = await httpClient.PostAsync("https://ocr.a9t9.com/api/Parse/Image", form);
+                HttpResponseMessage response = await httpClient.PostAsync("https://api.ocr.space/Parse/Image", form);
 
                 string strContent = await response.Content.ReadAsStringAsync();
 
