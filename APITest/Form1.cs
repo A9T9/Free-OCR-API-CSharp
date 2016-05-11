@@ -11,6 +11,10 @@ namespace OCRAPITest
 {
     public partial class Form1 : Form
     {
+
+        public string ImagePath { get; set; }
+        public string PdfPath { get; set; }
+
         public Form1()
         {
             InitializeComponent();
@@ -93,19 +97,47 @@ namespace OCRAPITest
             return strLang;
 
         }
-        private void button1_Click(object sender, EventArgs e)
+
+       private void button1_Click(object sender, EventArgs e)
         {
+            PdfPath = ImagePath = ""; pictureBox.BackgroundImage = null;
             OpenFileDialog fileDlg = new OpenFileDialog();
             fileDlg.Filter = "jpeg files|*.jpg;*.JPG";
             if (fileDlg.ShowDialog() == DialogResult.OK)
             {
                 FileInfo fileInfo = new FileInfo(fileDlg.FileName);
-                if (fileInfo.Length > 1024 * 1024)
+                if (fileInfo.Length > 5* 1024 * 1024)
                 {
-                    MessageBox.Show("jpeg file's size can not be larger than 1Mb");
+                    //Size limit depends: Free API 1 MB, PRO API 5 MB and more
+                    MessageBox.Show("Image file size limit reached (1MB free API)");
                     return;
                 }
                 pictureBox.BackgroundImage = Image.FromFile(fileDlg.FileName);
+                ImagePath = fileDlg.FileName;
+                lblInfo.Text = "Image loaded: "+ fileInfo.Name;
+                lblInfo.BackColor = Color.LightGreen;
+            }
+        }
+
+        private void btnPDF_Click(object sender, EventArgs e)
+        {
+            PdfPath = ImagePath = "";
+            pictureBox.BackgroundImage = null;
+            OpenFileDialog fileDlg = new OpenFileDialog();
+            fileDlg.Filter = "pdf files|*.pdf;";
+            if (fileDlg.ShowDialog() == DialogResult.OK)
+            {
+                FileInfo fileInfo = new FileInfo(fileDlg.FileName);
+                if (fileInfo.Length > 5* 1024 * 1024 )
+                {
+                    //Size limit depends: Free API 1 MB, PRO API 5 MB and more
+                    MessageBox.Show("PDF file size should not be larger than 5Mb");
+                    return;
+                }
+                PdfPath = fileDlg.FileName;
+                //PDF files are loaded, but can not be displayed in the image control. That does not affect the OCR.
+                lblInfo.Text = "PDF loaded [but not displayed]: " + fileInfo.Name;
+                lblInfo.BackColor = Color.LightSalmon;
             }
         }
 
@@ -123,29 +155,38 @@ namespace OCRAPITest
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            if (pictureBox.BackgroundImage == null)
+
+
+            if (string.IsNullOrEmpty(ImagePath) && string.IsNullOrEmpty(PdfPath))
                 return;
 
             txtResult.Text = "";
 
             button1.Enabled = false;
             button2.Enabled = false;
+            btnPDF.Enabled = false;
 
             try
             {
                 HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = new TimeSpan(1, 1, 1);
 
-                //Removed the api key from headers
-                //httpClient.DefaultRequestHeaders.TryAddWithoutValidation("apikey", "5a64d478-9c89-43d8-88e3-c65de9999580");
 
                 MultipartFormDataContent form = new MultipartFormDataContent();
-                //5a64d478-9c89-43d8-88e3-c65de9999580
                 form.Add(new StringContent("helloworld"), "apikey"); //Added api key in form data
                 form.Add(new StringContent(getSelectedLanguage()), "language");
 
 
-                byte[] imageData = ImageToBase64(pictureBox.BackgroundImage, System.Drawing.Imaging.ImageFormat.Jpeg);
-                form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "image", "image.jpg");
+                if (string.IsNullOrEmpty(ImagePath) == false)
+                {
+                    byte[] imageData = File.ReadAllBytes(ImagePath);
+                    form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "image", "image.jpg");
+                }
+                else if (string.IsNullOrEmpty(PdfPath) == false)
+                {
+                    byte[] imageData = File.ReadAllBytes(PdfPath);
+                    form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "PDF", "pdf.pdf");
+                }
 
                 HttpResponseMessage response = await httpClient.PostAsync("https://api.ocr.space/Parse/Image", form);
 
@@ -178,8 +219,8 @@ namespace OCRAPITest
 
             button1.Enabled = true;
             button2.Enabled = true;
+            btnPDF.Enabled = true;
         }
-
 
 
     }
