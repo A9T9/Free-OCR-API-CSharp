@@ -88,6 +88,7 @@
             // 
             this.cmbLanguage.FormattingEnabled = true;
             this.cmbLanguage.Items.AddRange(new object[] {
+            "Arabic",
             "ChineseSimplified",
             "ChineseTraditional ",
             "Czech",

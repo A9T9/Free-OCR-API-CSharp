@@ -18,7 +18,7 @@ namespace OCRAPITest
         public Form1()
         {
             InitializeComponent();
-            cmbLanguage.SelectedIndex = 5;//English
+            cmbLanguage.SelectedIndex = 6;//English
         }
 
         private string getSelectedLanguage()
@@ -35,61 +35,65 @@ namespace OCRAPITest
             switch (cmbLanguage.SelectedIndex)
             {
                 case 0:
-                    strLang = "chs";
+                    strLang = "ara";
                     break;
 
                 case 1:
+                    strLang = "chs";
+                    break;
+
+                case 2:
                     strLang = "cht";
                     break;
-                case 2:
+                case 3:
                     strLang = "cze";
                     break;
-                case 3:
+                case 4:
                     strLang = "dan";
                     break;
-                case 4:
+                case 5:
                     strLang = "dut";
                     break;
-                case 5:
+                case 6:
                     strLang = "eng";
                     break;
-                case 6:
+                case 7:
                     strLang = "fin";
                     break;
-                case 7:
+                case 8:
                     strLang = "fre";
                     break;
-                case 8:
+                case 9:
                     strLang = "ger";
                     break;
-                case 9:
+                case 10:
                     strLang = "gre";
                     break;
-                case 10:
+                case 11:
                     strLang = "hun";
                     break;
-                case 11:
+                case 12:
                     strLang = "jap";
                     break;
-                case 12:
+                case 13:
                     strLang = "kor";
                     break;
-                case 13:
+                case 14:
                     strLang = "nor";
                     break;
-                case 14:
+                case 15:
                     strLang = "pol";
                     break;
-                case 15:
+                case 16:
                     strLang = "por";
                     break;
-                case 16:
+                case 17:
                     strLang = "spa";
                     break;
-                case 17:
+                case 18:
                     strLang = "swe";
                     break;
-                case 18:
+                case 19:
                     strLang = "tur";
                     break;
 
