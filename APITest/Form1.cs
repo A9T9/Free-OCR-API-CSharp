@@ -106,7 +106,7 @@ namespace OCRAPITest
         {
             PdfPath = ImagePath = ""; pictureBox.BackgroundImage = null;
             OpenFileDialog fileDlg = new OpenFileDialog();
-            fileDlg.Filter = "jpeg files|*.jpg;*.JPG";
+            fileDlg.Filter = "jpeg and png files|*.png;*.jpg;*.JPG";
             if (fileDlg.ShowDialog() == DialogResult.OK)
             {
                 FileInfo fileInfo = new FileInfo(fileDlg.FileName);
@@ -180,6 +180,9 @@ namespace OCRAPITest
                 form.Add(new StringContent("helloworld"), "apikey"); //Added api key in form data
                 form.Add(new StringContent(getSelectedLanguage()), "language");
 
+                form.Add(new StringContent("2"), "ocrengine"); 
+                form.Add(new StringContent("true"), "scale");
+                form.Add(new StringContent("true"), "istable");
 
                 if (string.IsNullOrEmpty(ImagePath) == false)
                 {
