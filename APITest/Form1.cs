@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.IO;
 using Newtonsoft.Json;
 
-
 namespace OCRAPITest
 {
     public partial class Form1 : Form
@@ -37,11 +36,9 @@ namespace OCRAPITest
                 case 0:
                     strLang = "ara";
                     break;
-
                 case 1:
                     strLang = "chs";
                     break;
-
                 case 2:
                     strLang = "cht";
                     break;
@@ -96,10 +93,9 @@ namespace OCRAPITest
                 case 19:
                     strLang = "tur";
                     break;
-
             }
-            return strLang;
 
+            return strLang;
         }
 
        private void button1_Click(object sender, EventArgs e)
@@ -116,6 +112,7 @@ namespace OCRAPITest
                     MessageBox.Show("Image file size limit reached (1MB free API)");
                     return;
                 }
+
                 pictureBox.BackgroundImage = Image.FromFile(fileDlg.FileName);
                 ImagePath = fileDlg.FileName;
                 lblInfo.Text = "Image loaded: "+ fileInfo.Name;
@@ -138,6 +135,7 @@ namespace OCRAPITest
                     MessageBox.Show("PDF file size should not be larger than 5Mb");
                     return;
                 }
+
                 PdfPath = fileDlg.FileName;
                 //PDF files are loaded, but can not be displayed in the image control. That does not affect the OCR.
                 lblInfo.Text = "PDF loaded [but not displayed]: " + fileInfo.Name;
@@ -159,8 +157,6 @@ namespace OCRAPITest
 
         private async void button2_Click(object sender, EventArgs e)
         {
-
-
             if (string.IsNullOrEmpty(ImagePath) && string.IsNullOrEmpty(PdfPath))
                 return;
 
@@ -175,7 +171,6 @@ namespace OCRAPITest
                 HttpClient httpClient = new HttpClient();
                 httpClient.Timeout = new TimeSpan(1, 1, 1);
 
-
                 MultipartFormDataContent form = new MultipartFormDataContent();
                 form.Add(new StringContent("helloworld"), "apikey"); //Added api key in form data
                 form.Add(new StringContent(getSelectedLanguage()), "language");
@@ -184,12 +179,12 @@ namespace OCRAPITest
                 form.Add(new StringContent("true"), "scale");
                 form.Add(new StringContent("true"), "istable");
 
-                if (string.IsNullOrEmpty(ImagePath) == false)
+                if (!string.IsNullOrEmpty(ImagePath))
                 {
                     byte[] imageData = File.ReadAllBytes(ImagePath);
                     form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "image", "image.jpg");
                 }
-                else if (string.IsNullOrEmpty(PdfPath) == false)
+                else if (!string.IsNullOrEmpty(PdfPath))
                 {
                     byte[] imageData = File.ReadAllBytes(PdfPath);
                     form.Add(new ByteArrayContent(imageData, 0, imageData.Length), "PDF", "pdf.pdf");
@@ -199,25 +194,19 @@ namespace OCRAPITest
 
                 string strContent = await response.Content.ReadAsStringAsync();
 
+                RootObject ocrResult = JsonConvert.DeserializeObject<RootObject>(strContent);
 
-
-                Rootobject ocrResult = JsonConvert.DeserializeObject<Rootobject>(strContent);
-
-  
                 if (ocrResult.OCRExitCode == 1)
-                  {
-                         for (int i = 0; i < ocrResult.ParsedResults.Count() ; i++)
-                         {
-                             txtResult.Text = txtResult.Text + ocrResult.ParsedResults[i].ParsedText ;
-                         }
-                     }
-                     else
-                     {
-                         MessageBox.Show("ERROR: " + strContent);
-                     }
-                    
-
-
+                {
+                    foreach (ParsedResult parsedResult in ocrResult.ParsedResults)
+                    {
+                        txtResult.Text += parsedResult.ParsedText;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("ERROR: " + ocrResult.ErrorMessage[0]);
+                }
             }
             catch (Exception exception)
             {
@@ -228,10 +217,5 @@ namespace OCRAPITest
             button2.Enabled = true;
             btnPDF.Enabled = true;
         }
-
-
     }
 }
-
-
-
