@@ -205,7 +205,7 @@ namespace OCRAPITest
                 }
                 else
                 {
-                    MessageBox.Show("ERROR: " + strContent);
+                    MessageBox.Show("ERROR: " + ocrResult.ErrorMessage[0]);
                 }
             }
             catch (Exception exception)
