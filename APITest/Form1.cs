@@ -201,7 +201,7 @@ namespace OCRAPITest
 
 
 
-                Rootobject ocrResult = JsonConvert.DeserializeObject<Rootobject>(strContent);
+                RootObject ocrResult = JsonConvert.DeserializeObject<RootObject>(strContent);
 
   
                 if (ocrResult.OCRExitCode == 1)
